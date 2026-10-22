@@ -1,10 +1,9 @@
 import { router } from "expo-router";
 import { Text, View } from "react-native";
 import { Ball } from "@/components/hooplog/ball";
-import { Button, Demo, Screen } from "@/components/hooplog/ui";
+import { Button, Screen } from "@/components/hooplog/ui";
 import { colors as c, ui } from "@/constants/hooplog";
 export default function Welcome() {
-  const enter = () => router.replace("/home");
   return (
     <Screen header={false}>
       <View style={{ flex: 1, justifyContent: "center", gap: 28 }}>
@@ -31,9 +30,12 @@ export default function Welcome() {
           </Text>
         </View>
       </View>
-      <Button title="Empezar →" onPress={enter} />
-      <Button title="Ya tengo una cuenta" secondary onPress={enter} />
-      <Demo>Etapa 1 · Explorá Hooplog sin crear una cuenta</Demo>
+      <Button title="Empezar →" onPress={() => router.push("/register")} />
+      <Button
+        title="Ya tengo una cuenta"
+        secondary
+        onPress={() => router.push("/login")}
+      />
     </Screen>
   );
 }

@@ -18,7 +18,12 @@ export function Screen({
           <Text style={ui.label}>BY HOOPERS</Text>
         </View>
       )}
-      <ScrollView contentContainerStyle={s.content}>{children}</ScrollView>
+      <ScrollView
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={s.content}
+      >
+        {children}
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -26,19 +31,23 @@ export function Button({
   title,
   onPress,
   secondary = false,
+  disabled = false,
 }: {
   title: string;
   onPress: () => void;
   secondary?: boolean;
+  disabled?: boolean;
 }) {
   return (
     <Pressable
       accessibilityRole="button"
+      accessibilityState={{ disabled }}
+      disabled={disabled}
       onPress={onPress}
       style={({ pressed }) => [
         s.button,
         secondary && s.secondary,
-        { opacity: pressed ? 0.7 : 1 },
+        { opacity: disabled ? 0.5 : pressed ? 0.7 : 1 },
       ]}
     >
       <Text style={s.buttonText}>{title}</Text>

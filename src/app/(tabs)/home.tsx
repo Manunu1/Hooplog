@@ -3,14 +3,14 @@ import { Text, View } from "react-native";
 import { Button, Demo, Screen, Stats } from "@/components/hooplog/ui";
 import { Court } from "@/components/hooplog/court";
 import { colors as c, ui } from "@/constants/hooplog";
-import { lastSession as last, player } from "@/data/demo";
+import { lastSession as last } from "@/data/demo";
 export default function Home() {
   return (
     <Screen>
       <Demo />
       <View style={{ gap: 6 }}>
         <Text style={ui.label}>CADA TIRO CUENTA</Text>
-        <Text style={ui.title}>Buen día, {player.name}</Text>
+        <Text style={ui.title}>¡Qué bueno verte!</Text>
         <Text style={ui.text}>¿Listo para entrenar?</Text>
       </View>
       <View style={[ui.card, { backgroundColor: c.peach }]}>

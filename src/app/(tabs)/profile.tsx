@@ -1,9 +1,30 @@
-import { router } from "expo-router";
+import { useRef, useState } from "react";
 import { Alert, Pressable, Text, View } from "react-native";
 import { Button, Demo, Screen, Stats } from "@/components/hooplog/ui";
 import { colors as c, ui } from "@/constants/hooplog";
 import { player } from "@/data/demo";
+import { useAuth } from "@/auth/auth-provider";
+import { authErrorMessage } from "@/auth/errors";
 export default function Profile() {
+  const { session, signOut } = useAuth();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const pending = useRef(false);
+  const email = session?.user.email ?? "Correo no disponible";
+  async function logout() {
+    if (pending.current) return;
+    pending.current = true;
+    setBusy(true);
+    setError(null);
+    try {
+      await signOut();
+    } catch (failure: unknown) {
+      setError(authErrorMessage(failure));
+    } finally {
+      pending.current = false;
+      setBusy(false);
+    }
+  }
   return (
     <Screen>
       <View style={{ alignItems: "center", gap: 12, paddingVertical: 16 }}>
@@ -20,13 +41,18 @@ export default function Profile() {
           }}
         >
           <Text style={{ fontSize: 30, color: c.rust, fontWeight: "900" }}>
-            {player.initials}
+            {session?.user.email?.charAt(0).toUpperCase() ?? "H"}
           </Text>
         </View>
-        <Text style={[ui.title, { fontSize: 40 }]}>{player.name}</Text>
-        <Text style={ui.text}>Miembro desde mayo de 2024</Text>
+        <Text style={[ui.title, { fontSize: 40 }]}>Tu perfil</Text>
+        <Text selectable style={[ui.text, { textAlign: "center" }]}>
+          {email}
+        </Text>
       </View>
-      <Demo>Perfil de ejemplo · No hay una cuenta iniciada</Demo>
+      <Demo>
+        Cuenta real · Las estadísticas de abajo son datos de ejemplo, no
+        corresponden a tu cuenta.
+      </Demo>
       <View style={ui.card}>
         <Stats
           items={[
@@ -51,7 +77,7 @@ export default function Profile() {
               Alert.alert(
                 label,
                 label === "Acerca de Hooplog"
-                  ? "By hoopers, for hoopers. Registrá cada tiro. Mejorá tu juego.\n\nHooplog · Vista previa, etapa 1."
+                  ? "By hoopers, for hoopers. Registrá cada tiro. Mejorá tu juego.\n\nHooplog · Etapa 2."
                   : "Esta opción estará disponible en una próxima etapa. No se guardaron cambios.",
               )
             }
@@ -61,10 +87,16 @@ export default function Profile() {
           </Pressable>
         ))}
       </View>
+      {error && (
+        <Text accessibilityRole="alert" style={{ color: c.rust }}>
+          {error}
+        </Text>
+      )}
       <Button
-        title="Volver a la bienvenida"
+        title={busy ? "Cerrando sesión…" : "Cerrar sesión"}
         secondary
-        onPress={() => router.replace("/")}
+        disabled={busy}
+        onPress={() => void logout()}
       />
     </Screen>
   );
